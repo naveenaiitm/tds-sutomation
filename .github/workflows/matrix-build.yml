@@ -1,0 +1,42 @@
+name: Matrix Build with Artifacts (2d3e9f2)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build for version ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [14, 16, 18]  # 3 variants (can be Node, Python, etc.)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Required identifier step
+      - name: matrix-2d3e9f2
+        run: echo "Building for version ${{ matrix.version }}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.version }}
+
+      - name: Generate build artifact
+        run: |
+          echo "Build output for Node version ${{ matrix.version }}" > build-output.txt
+          echo "Generated on $(date)" >> build-output.txt
+
+      - name: Verify artifact not empty
+        run: |
+          echo "Checking file size..."
+          ls -lh build-output.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-2d3e9f2-v${{ matrix.version }}
+          path: build-output.txt
